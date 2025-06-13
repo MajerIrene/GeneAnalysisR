@@ -1,0 +1,169 @@
+---
+title: "Gene Expression Analysis and Clustering"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{gene_expression_workflow}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+Let's start with loading the libraries used in this analysis
+
+```{r setup}
+library(GeneAnalysisR)
+library(org.Hs.eg.db)
+```
+
+## Introduction
+
+This vignette demonstrates how to use GeneAnalysisR to easily read, analyse and cluster your RNA Bulk-seq datasets! It covers the entire workflow, in particular:
+
+1.  Read gene expression data
+2.  Normalization
+3.  Exploratory analysis and identification of outlier genes
+4.  Clustering
+5.  Enrichment analysis
+
+## Step 1: How to load the expression data
+
+In this vignette, we use a subset of the dataset from the study "Human Airway Smooth Muscle Transcriptome Changes in Response to Asthma Medications". The full dataset is available on GEO under accession number GSE52778. For the purpose of this vignette, we selected the 500 most variable genes to create a smaller, representative subset suitable for demonstration and analysis.
+
+```{r}
+file_path <- system.file("extdata", "airway_top500.csv", package = "GeneAnalysisR")
+expr <- read_expression_data(file_path, row_names=TRUE)
+```
+
+Let's check some detail about this dataset
+
+```{r}
+dim(expr)
+class(expr)
+head(expr)
+```
+
+Here are the metadata regarding this experiment to have a better understanding of the samples (taken from airway that is the GSE52778 implementation in Bioconductor):
+
+| SampleName | GSM        | cell    | dex   | albut | avgLength | Experiment | Run        |
+|-----------|-----------|--------|------|------|---------|------------|------------|
+| SRR1039508 | GSM1275862 | N61311  | untrt | untrt | 126       | SRX384345  | SRR1039508 |
+| SRR1039509 | GSM1275863 | N61311  | trt   | untrt | 126       | SRX384346  | SRR1039509 |
+| SRR1039512 | GSM1275866 | N052611 | untrt | untrt | 126       | SRX384349  | SRR1039512 |
+| SRR1039513 | GSM1275867 | N052611 | trt   | untrt | 87        | SRX384350  | SRR1039513 |
+| SRR1039516 | GSM1275870 | N080611 | untrt | untrt | 120       | SRX384353  | SRR1039516 |
+| SRR1039517 | GSM1275871 | N080611 | trt   | untrt | 126       | SRX384354  | SRR1039517 |
+| SRR1039520 | GSM1275874 | N061011 | untrt | untrt | 101       | SRX384357  | SRR1039520 |
+| SRR1039521 | GSM1275875 | N061011 | trt   | untrt | 98        | SRX384358  | SRR1039521 |
+
+For convenience, it's recommended to convert Ensembl IDs to gene symbols. Since GeneAnalysisR does not perform this conversion automatically, users should either preprocess their expression file accordingly or perform the conversion after loading the data using the package.
+
+```{r, warning=FALSE}
+ensembl_ids <- rownames(expr)
+length(ensembl_ids)
+gene_symbols <- mapIds(org.Hs.eg.db,
+                       keys = ensembl_ids,
+                       column = "SYMBOL",
+                       keytype = "ENSEMBL",
+                       multiVals = "first")
+
+# If gene name is not found, use ensemble
+gene_symbols[is.na(gene_symbols)] <- ensembl_ids[is.na(gene_symbols)]
+gene_symbols <- make.unique(gene_symbols)
+# Reorder to have gene symbol as first 
+rownames(expr) <- gene_symbols
+```
+
+## Step 2: Normalization
+GeneAnalysisR provides multiple normalization options, including log2(count + 1) transformation, z-score normalization, quantile normalization and vst. In this vignette, we use the log2(count+1) transformation since is one of the most widely used methods in gene expression analysis. Log2 transformation helps stabilize variance and make the data more symmetric and suitable for downstream analyses like clustering and PCA.
+```{r}
+normalized <- normalize_data(expr, method="log2")
+head(normalized)
+```
+
+## Step 3: Exploratory analysis and identification of outlier genes
+Let's start with visualizing the boxplots of gene expression before and after the normalization to check that the process eventually normalize the expression across samples. To do this we can use the plot_boxplot function included in this package.
+```{r}
+plot_boxplot(expr, "Expression distribution before normalization")
+```
+We can notice the presence of some outlier in the raw counts, in particular in sample SRR1039512 (untreated). Now let's see what happen after normalization.
+```{r}
+plot_boxplot(normalized, "Expression distribution after normalization")
+```
+The thick lines inside each box (representing the medians) are now very well-aligned and are at a similar expression level (around 13-14). Even after normalization, some individual outlier points are still observed but this is expected as some genes may be expressed very differently in specific samples for biological reasons, and not just due to technical noise.
+
+We can now proceed with the removal of outlier genes. However, this step is not mandatory, since extreme values might be biologically relevant and could provide important insights into differential gene expression between treatment and untreated conditions. Nevertheless, we provide a function to detect and remove outlier genes. You can adjust its parameters according to the specific goals of your analysis. The function also generates a graphical report to help you better understand the effects of parameter choices and guide their tuning. Note: In this vignette, we use relaxed parameter settings because we are working with a reduced number of genes, as the dataset is a subset of the original one.
+```{r}
+filtered_data <- filter_outlier_genes(normalized, min_mean_expr = 1, min_var = 0.1, z_cutoff = 3)
+```
+
+## Step 4: Clustering
+It's important to chose the right number of cluster before applying the clustering itself. GeneAnalysisR provide two different statistics to help the user to decide the number of the cluster. First is Elbow method:
+```{r}
+choose_k(filtered_data, method = "elbow", max_k = 10)
+```
+Based on the elbow plot, the optimal number of clusters appears to be between 3 and 4. Next, let’s use the silhouette method to determine the best value of k more precisely.
+```{r}
+choose_k(filtered_data, method = "silhouette", max_k = 10)
+```
+The optimal value here is 2. This makes sense, given that the dataset distinguishes between treated and untreated groups. Therefore, in this specific case, choosing k = 2 is the most appropriate decision. The clustering function allows you to select the clustering method, specify the number of clusters, and choose from several distance metrics. For a full list of available options and detailed usage, please refer to the function manual. Below is a simple example demonstrating basic usage for each methodologies
+```{r}
+kmeans <- clustering(filtered_data, k = 2, method = "kmeans")
+hierarchical <- clustering(filtered_data, k = 2, method = 'hierarchical', distance = 'euclidean')
+pam <- clustering(filtered_data, k=2, method = 'pam', distance_method = 'manhattan')
+```
+Let's plot the results. First we start with Principal Component Analysis (PCA) for both the methodologies using the function plot_pca_clustering
+```{r}
+plot_pca(filtered_data, kmeans$clusters)
+```
+The PCA plot shows a clear separation between the two clusters along the first principal component (PC1). Now let's visualize the PCA plot for the hierarchical clustering:
+```{r}
+plot_pca(filtered_data, hierarchical$clusters)
+```
+Finally the pca plot for PAM clustering:
+```{r}
+plot_pca(filtered_data, pam$clusters)
+```
+The clear separation suggests that hierarchical clustering has identified two groups that differ significantly along a dominant latent feature—possibly linked to biological or experimental conditions such as treated vs. untreated. The fact that PC1 captures the vast majority of the variance further supports the idea that a two-cluster solution is appropriate and meaningful in this dataset in both cases. We can now visualize the dendrogram resulting from the hierarchical clustering. In this package, the plot_dendrogram function omits gene labels by default, as displaying all of them would result in an unreadable and cluttered visualization.
+```{r, warning=FALSE}
+plot_dendrogram(hierarchical)
+```
+GeneAnalysisR also provides a function plot_heatmap to have another possibility of visualization.
+```{r}
+plot_heatmap(filtered_data, kmeans)
+```
+And let's do the same for hierarchical clustering
+```{r}
+plot_heatmap(filtered_data, hierarchical)
+```
+The heatmap results are not very convincing, but it's important to emphasize once again that we are using a subset of 500 genes. This could be the reason why no interesting patterns are visible in the plot.
+
+## Enrichment Analysis
+Finally GeneAnalysisR provides two functions to perform enrichment analysis: go_enrichment and gsea_enrichment. So let's perform both the analysis to explore the results.
+Let's start with go enrichment analysis. Please note: this process may take a moment to complete.
+```{r, warning=FALSE}
+go_kmeans <- go_enrichment(kmeans$clusters)
+```
+We can now visualize the results using the plot_dotplot function from GeneAnalysisR, which displays a dotplot of the top 10 most enriched GO terms.
+```{r}
+plot_dotplot(go_kmeans[[1]], title = "GO Enrichment - KMeans cluster 1")
+```
+
+```{r}
+plot_dotplot(go_kmeans[[2]], title = "GO Enrichment - KMeans cluster 2")
+```
+A similar analysis can be performed for hierarchical and pam clustering, but it will not be covered in this vignette.
+
+We can also perform Gene Set Enrichment Analysis in a slightly different way. GSEA, in fact, requires a ranked list of genes as input. In this package, we generate this ranking by calculating the log2 fold change of gene expression within each cluster compared to the rest of the samples. This approach allows us to capture cluster-specific differential expression patterns as the basis for enrichment analysis.
+```{r}
+
+```
+
+
+
+

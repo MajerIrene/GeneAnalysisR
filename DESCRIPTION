@@ -1,0 +1,39 @@
+Package: GeneAnalysisR
+Type: Package
+Title: Simple Gene Expression Analysis and Clustering.
+Version: 0.1.0
+Authors@R: c(
+    person(
+      "Irene", "Majer",
+      email = "ire.majer@gmail.com",
+      role = c("aut", "cre")
+    )
+  )
+Description: Provides tools to import, preprocess, analyze, and cluster gene expression 
+    data from bulk RNA-seq. The package supports input from CSV, TSV and TXT, applies 
+    standard normalization techniques, detects outlier genes, performs clustering using 
+    various algorithms (e.g., hierarchical clustering, k-means),and generates 
+    visualizations such as PCA plots, heatmaps, and dendrograms. Includes functionality 
+    for gene set enrichment analysis (GSEA) on gene clusters.
+License: GPL-2
+Encoding: UTF-8
+LazyData: true
+RoxygenNote: 7.3.2
+Suggests: 
+    knitr,
+    rmarkdown
+Imports:
+    preprocessCore,
+    DESeq2,
+    SummarizedExperiment,
+    ggplot2,
+    reshape2,
+    stats,
+    graphics,
+    methods,
+    dendextend,
+    clusterProfiler,
+    AnnotationDbi,
+    org.Hs.eg.db,
+    enrichplot
+VignetteBuilder: knitr
