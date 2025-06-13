@@ -37,3 +37,5 @@ Imports:
     org.Hs.eg.db,
     enrichplot
 VignetteBuilder: knitr
+URL: https://github.com/MajerIrene/GeneAnalysisR
+BugReports: https://github.com/MajerIrene/GeneAnalysisR/issues
