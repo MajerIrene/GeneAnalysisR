@@ -3,8 +3,7 @@
 #' This function plots a boxplot of gene expression values across samples,
 #' either for raw or normalized data.
 #'
-#' @param expr_data A numeric matrix or data frame of expression data
-#'        (genes as rows, samples as columns).
+#' @param expr_data A numeric matrix or data frame of expression data (genes x samples).
 #' @param title A character string for the plot title (e.g., "Raw Data" or "Normalized Data").
 #'
 #' @return A ggplot2 object with the boxplot.
