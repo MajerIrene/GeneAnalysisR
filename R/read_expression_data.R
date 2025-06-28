@@ -12,7 +12,6 @@
 #' @examples
 #' file_path <- system.file("extdata", "airway_top500.csv", package = "GeneClustR")
 #' expr <- read_expression_data(file_path)
-#'
 
 read_expression_data <- function(file_path, header = TRUE, row_names = TRUE) {
   # Check file existence

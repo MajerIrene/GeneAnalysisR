@@ -5,7 +5,7 @@
 \title{Perform clustering using k-means, hierarchical, or PAM method}
 \usage{
 clustering(
-  data,
+  expr_data,
   k,
   method = c("kmeans", "hierarchical", "pam"),
   nstart = 25,
@@ -13,32 +13,26 @@ clustering(
 )
 }
 \arguments{
-\item{data}{A numeric matrix or data frame containing the features to cluster (genes × samples).}
+\item{expr_data}{Numeric matrix of gene expression (genes x samples).}
 
-\item{k}{Integer specifying the number of clusters.}
+\item{k}{Number of clusters.}
 
-\item{method}{Character string specifying the clustering method: "kmeans", "hierarchical", or "pam".}
+\item{method}{Clustering method: "kmeans", "hierarchical", or "pam".}
 
-\item{nstart}{Number of random starts for k-means (default 25). Ignored if method is "hierarchical" or "pam".}
+\item{nstart}{Number of starts for k-means. Default is 25.}
 
-\item{distance_method}{Distance metric to use for hierarchical or PAM clustering (default "euclidean").
-Options include "euclidean", "maximum", "manhattan", "canberra", "binary", "minkowski".}
+\item{distance_method}{Distance metric for hierarchical or PAM. Default is euclidean.}
 }
 \value{
-A list containing clustering results:
+A list with:
 \itemize{
-  \item \code{clusters}: a named vector of cluster assignments.
-  \item \code{model}: the clustering model object (kmeans, hclust, or pam).
+ \item clusters: Named vector of cluster assignments (gene names as names).
+ \item model: The clustering model object (kmeans, hclust, or pam).
 }
 }
 \description{
-This function performs clustering on a numeric dataset using either k-means, hierarchical, or PAM clustering,
-based on the user's choice. It returns the clustering results.
-}
-\examples{
-\dontrun{
-kmeans <- clustering(normalized, k = 10, method = "kmeans")
-hierarchical<- clustering(normalized, k = 10, method = "hierarchical", distance_method = "manhattan")
-pam <- clustering(normalized, k = 10, method = "pam")
-}
+This function performs either k-means, hierarchical or PAM clustering over the
+gene set (not samples). The function takes as input the expression matrix
+(genes x samples) and returns a list containing cluster assignment and the
+chosen model.
 }

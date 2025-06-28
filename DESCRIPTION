@@ -21,16 +21,17 @@ LazyData: true
 RoxygenNote: 7.3.2
 Suggests: 
     knitr,
-    rmarkdown
+    rmarkdown,
+    testthat (>= 3.0.0)
 Imports:
     preprocessCore,
-    DESeq2,
     SummarizedExperiment,
     ggplot2,
     reshape2,
     stats,
     graphics,
     methods,
+    pheatmap,
     dendextend,
     clusterProfiler,
     AnnotationDbi,
@@ -39,3 +40,4 @@ Imports:
 VignetteBuilder: knitr
 URL: https://github.com/MajerIrene/GeneAnalysisR
 BugReports: https://github.com/MajerIrene/GeneAnalysisR/issues
+Config/testthat/edition: 3

@@ -4,40 +4,36 @@
 \alias{go_enrichment}
 \title{Perform GO Enrichment Analysis for Gene Clusters}
 \usage{
-go_enrichment(
-  gene_clusters,
-  ontology = "BP",
-  organism_db = org.Hs.eg.db::org.Hs.eg.db,
-  keyType = "SYMBOL"
-)
+go_enrichment(gene_clusters, organism_db)
 }
 \arguments{
 \item{gene_clusters}{Named vector or factor indicating cluster assignment for each gene.
 The names should be gene identifiers (e.g., gene symbols or Ensembl IDs).}
 
-\item{ontology}{Character string specifying which GO ontology to use.
-Options are \code{"BP"} (Biological Process), \code{"MF"} (Molecular Function), or \code{"CC"} (Cellular Component).
-Default is \code{"BP"}.}
-
 \item{organism_db}{AnnotationDbi organism database object to map gene IDs and perform enrichment.
-Default is \code{org.Hs.eg.db::org.Hs.eg.db} (human).}
+Default is org.Hs.eg.db (human).}
 
-\item{keyType}{Character string specifying the type of gene IDs used in \code{gene_clusters}.
-Common options include \code{"SYMBOL"} and \code{"ENSEMBL"}. Default is \code{"SYMBOL"}.}
+\item{ontology}{Character string specifying which GO ontology to use.
+Options are "BP" (Biological Process), "MF" (Molecular Function), or "CC" (Cellular Component).
+Default is "BP".}
+
+\item{keyType}{Character string specifying the type of gene IDs used in gene_clusters.
+Common options include "SYMBOL" and "ENSEMBL". Default is "SYMBOL".}
 }
 \value{
-A named list of \code{enrichResult} objects (from \code{clusterProfiler}), one per cluster.
+A named list of enrichResult objects, one per cluster.
         Clusters with fewer than 10 mapped genes are skipped with a message.
 }
 \description{
 This function performs Gene Ontology (GO) enrichment analysis on sets of genes grouped by clusters.
-It uses the \code{clusterProfiler} package to identify enriched GO terms within each cluster.
+It uses the clusterProfiler package to identify enriched GO terms within each cluster. The function
+returns one list for each cluster.
 }
 \examples{
 \dontrun{
 # Suppose kmeans$clusters is a named vector with gene cluster assignments
 go_kemeans <- go_enrichment(kmeans$clusters)
 # Access GO enrichment for cluster "1"
-go_results[["1"]]
+go_kmeans[["1"]]
 }
 }

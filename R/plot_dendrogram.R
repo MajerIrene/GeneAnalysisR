@@ -30,16 +30,16 @@ plot_dendrogram <- function(clustering_res) {
     stop("Model is not hierarchical.")
   }
 
-  dend <- stats::as.dendrogram(clustering_res$model)
+  dend <- as.dendrogram(clustering_res$model)
   k <- length(unique(clustering_res$clusters))
 
-  dend <- dendextend::color_branches(dend, k = k)
-  dend <- dendextend::set(dend, "labels", NA)  # rimuove etichette
+  dend <- color_branches(dend, k = k)
+  dend <- set(dend, "labels", NA)  # rimuove etichette
 
   old_mar <- par("mar")
   on.exit(par(mar = old_mar))
   par(mar = c(5, 4, 4, 2))  # meno spazio per etichette
 
   plot(dend, main = "Hierarchical Clustering Dendrogram", horiz = TRUE)
-  dendextend::rect.dendrogram(dend, k = k, border = 2:(k + 1), horiz = TRUE)
+  rect.dendrogram(dend, k = k, border = 2:(k + 1), horiz = TRUE)
 }

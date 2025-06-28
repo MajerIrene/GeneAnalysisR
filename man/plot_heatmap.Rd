@@ -4,25 +4,24 @@
 \alias{plot_heatmap}
 \title{Plot a heatmap of gene expression grouped by clusters}
 \usage{
-plot_heatmap(data, clustering_res, scale_data = TRUE)
+plot_heatmap(expr_data, clustering_res, scale_data = TRUE)
 }
 \arguments{
-\item{data}{A numeric matrix or data frame with genes as rows and samples as columns.}
+\item{expr_data}{A numeric matrix of raw counts (genes x samples).}
 
 \item{clustering_res}{The result from the `clustering()` function.}
 
-\item{scale_data}{Logical, whether to scale rows before plotting (default TRUE).}
+\item{scale_data}{Logical, whether to scale rows before plotting. Default is TRUE.}
 }
 \value{
-NULL. The heatmap is plotted.
+The heatmap is plotted.
 }
 \description{
 This function plots a heatmap of gene expression data, ordered by the clustering result.
 }
 \examples{
 \dontrun{
-hierarchical <- clustering(data, k = 10, method = "hierarchical", distance_method = 'euclidean')
+hierarchical <- clustering(normalized, k = 10, method = "hierarchical", distance_method = 'euclidean')
 plot_heatmap(normalized, hierarchical)
 }
-
 }

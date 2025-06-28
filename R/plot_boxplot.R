@@ -19,7 +19,7 @@
 #'   plot_boxplot(expr_data = normalized, title = "Normalized Expression")
 #' }
 plot_boxplot <- function(expr_data, title = "Expression Data") {
-  long_data <- reshape2::melt(expr_data)
+  long_data <- melt(expr_data)
   colnames(long_data) <- c("Gene", "Sample", "Expression")
 
   ggplot(long_data, aes(x = Sample, y = Expression)) +

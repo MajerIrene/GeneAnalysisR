@@ -2,19 +2,17 @@
 % Please edit documentation in R/choose_k.R
 \name{choose_k}
 \alias{choose_k}
-\title{Determine the optimal number of clusters using elbow or silhouette method}
+\title{Determine the optimal number of clusters using elbow and silhouette method}
 \usage{
-choose_k(data, method = "elbow", max_k = 10, scale_data = TRUE)
+choose_k(expr_data, method = "elbow", max_k = 10, scale_data = TRUE)
 }
 \arguments{
-\item{data}{A numeric data frame or matrix, with genes as rows and samples as columns.}
+\item{expr_data}{Numeric matrix of gene expression (genes x samples).}
 
 \item{method}{Character string specifying the method to use. Options are \code{"elbow"} (default)
 or \code{"silhouette"}.}
 
 \item{max_k}{Integer indicating the maximum number of clusters to evaluate. Default is 10.}
-
-\item{scale_data}{Logical, whether to scale the data by gene (row-wise z-score) before clustering. Default is \code{TRUE}.}
 }
 \value{
 A plot is produced showing either:
@@ -22,12 +20,10 @@ A plot is produced showing either:
   \item Total within-cluster sum of squares (elbow method)
   \item Average silhouette width (silhouette method)
 }
-The function is used for visual inspection and does not return a value.
 }
 \description{
 This function helps to determine the optimal number of clusters (\code{k}) for clustering algorithms,
-using either the elbow method (based on within-cluster sum of squares) or the silhouette method
-(based on average silhouette width).
+using both the elbow method or the silhouette method.
 }
 \examples{
 \dontrun{
@@ -35,5 +31,4 @@ using either the elbow method (based on within-cluster sum of squares) or the si
 choose_k(normalized, method = "elbow", max_k = 10)
 choose_k(normalized, method = "silhouette", max_k = 10)
 }
-
 }

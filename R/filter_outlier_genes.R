@@ -1,21 +1,27 @@
 #' Filter Outlier Genes Based on Expression and Variance Metrics
 #'
-#' This function performs exploratory filtering of genes in a gene expression matrix to remove potential outliers.
-#' It filters genes based on minimum mean expression, minimum variance, and extreme Z-score values of mean and variance.
+#' This function performs filtering of genes in a gene expression matrix to remove
+#' potential outlier. It filters genes based on minimum mean expression, minimum
+#' variance, and extreme Z-score values of mean and variance. The function return
+#' a filtered expression matrix without outlier.
 #' Optional diagnostic plots visualize the distributions before filtering.
 #'
-#' @param data A numeric matrix or data frame of gene expression values. Rows correspond to genes and columns to samples.
+#' @param expr_matrix A numeric matrix or data frame of gene expression values. Rows
+#'             correspond to genes and columns to samples.
 #'             It is expected that data is normalized (e.g., log-transformed).
-#' @param min_mean_expr Numeric scalar. Minimum mean expression threshold. Genes with mean expression below this are removed. Default is 1.
-#' @param min_var Numeric scalar. Minimum variance threshold. Genes with variance below this are removed. Default is 0.5.
-#' @param z_cutoff Numeric scalar. Z-score cutoff for detecting outliers in mean expression and variance. Genes with Z-scores outside ±z_cutoff are removed. Default is 3.
-#' @param plot_report Logical. If TRUE, diagnostic histograms of mean expression, variance, and their Z-scores are plotted. Default is TRUE.
+#' @param min_mean_expr Numeric scalar. Minimum mean expression threshold.
+#'                      Genes with mean expression below this are removed. Default is 1.
+#' @param min_var Numeric scalar. Minimum variance threshold. Genes with variance
+#'                below this are removed. Default is 0.5.
+#' @param z_cutoff Numeric scalar. Z-score cutoff for detecting outliers in mean
+#'                expression and variance. Genes with Z-scores outside z_cutoff
+#'                are removed. Default is 3.
+#' @param plot_report Logical. If TRUE, diagnostic histograms are plotted. Default is TRUE.
 #'
 #' @return A filtered gene expression matrix containing only genes passing all filtering criteria.
 #'
 #' @examples
 #' \dontrun{
-#' # Assuming `normalized` is your normalized gene expression matrix
 #' filtered_data <- filter_outlier_genes(normalized, min_mean_expr = 1, min_var = 0.5, z_cutoff = 3)
 #' }
 #'
@@ -28,19 +34,26 @@ filter_outlier_genes <- function(data,
                                  z_cutoff = 3,
                                  plot_report = TRUE) {
 
-  # Internal helper to calculate Z-score
+  # Added after performing test, need to check for rownames
+  if (is.null(rownames(expr))) {
+    stop("Input expression matrix must have row names (gene names).")
+  }
+  # Calculate Z-score standardizing the mean
   z_score <- function(x) (x - mean(x)) / sd(x)
 
+  # Mean expr and variance expression per gene
   gene_means <- rowMeans(data)
   gene_vars <- apply(data, 1, var)
 
   z_means <- z_score(gene_means)
   z_vars <- z_score(gene_vars)
 
+  # Keep genes with enough mean, variance and zscore
   keep_expr <- gene_means > min_mean_expr
   keep_var <- gene_vars > min_var
   keep_z <- (abs(z_means) < z_cutoff) & (abs(z_vars) < z_cutoff)
 
+  # Combine the three condition
   keep <- keep_expr & keep_var & keep_z
 
   data_filtered <- data[keep, , drop = FALSE]

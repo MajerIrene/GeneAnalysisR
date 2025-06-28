@@ -16,9 +16,9 @@ A normalized numeric matrix.
 }
 \description{
 Normalize a numeric gene expression matrix using one of the following methods:
-log2 transformation, z-score standardization or quantile normalization.
+log2 transformation, z-score standardization or quantile normalization. The
+function returns a normalized numeric matrix.
 }
 \examples{
-norm_mat <- normalization(mat, method = "log2")
-
+normalized <- normalization(mat, method = "log2")
 }

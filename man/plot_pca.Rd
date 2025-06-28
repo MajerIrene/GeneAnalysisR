@@ -4,15 +4,15 @@
 \alias{plot_pca}
 \title{Plot PCA colored by clustering results}
 \usage{
-plot_pca(data, clusters)
+plot_pca(expr_data, clusters)
 }
 \arguments{
-\item{data}{A numeric matrix or data frame used for clustering.}
+\item{expr_data}{A numeric matrix or data frame used for clustering (rows = samples).}
 
 \item{clusters}{A vector of cluster assignments (same length as number of rows in data).}
 }
 \value{
-No return value. A PCA scatter plot is displayed.
+NULL. Produces a PCA plot.
 }
 \description{
 This function visualizes the first two principal components of a dataset,
@@ -20,7 +20,6 @@ coloring the points based on cluster assignments.
 }
 \examples{
 \dontrun{
-kmeans <- clustering(normalized, k = 10, method = "kmeans")
-plot_pca_clustering(normalized, kmeans$clusters)
+plot_pca(normalized, kmeans$clusters)
 }
 }

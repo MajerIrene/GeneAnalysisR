@@ -1,69 +1,50 @@
 #' Perform clustering using k-means, hierarchical, or PAM method
 #'
-#' This function performs clustering on a numeric dataset using either k-means, hierarchical, or PAM clustering,
-#' based on the user's choice. It returns the clustering results.
+#' This function performs either k-means, hierarchical or PAM clustering over the
+#' gene set (not samples). The function takes as input the expression matrix
+#' (genes x samples) and returns a list containing cluster assignment and the
+#' chosen model.
 #'
-#' @param data A numeric matrix or data frame containing the features to cluster (genes × samples).
-#' @param k Integer specifying the number of clusters.
-#' @param method Character string specifying the clustering method: "kmeans", "hierarchical", or "pam".
-#' @param nstart Number of random starts for k-means (default 25). Ignored if method is "hierarchical" or "pam".
-#' @param distance_method Distance metric to use for hierarchical or PAM clustering (default "euclidean").
-#'        Options include "euclidean", "maximum", "manhattan", "canberra", "binary", "minkowski".
+#' @param expr_data Numeric matrix of gene expression (genes x samples).
+#' @param k Number of clusters.
+#' @param method Clustering method: "kmeans", "hierarchical", or "pam".
+#' @param nstart Number of starts for k-means. Default is 25.
+#' @param distance_method Distance metric for hierarchical or PAM. Default is euclidean.
 #'
-#' @return A list containing clustering results:
+#' @return A list with:
 #' \itemize{
-#'   \item \code{clusters}: a named vector of cluster assignments.
-#'   \item \code{model}: the clustering model object (kmeans, hclust, or pam).
+#'  \item clusters: Named vector of cluster assignments (gene names as names).
+#'  \item model: The clustering model object (kmeans, hclust, or pam).
 #' }
 #' @import stats
 #' @importFrom cluster pam
-#' @examples
-#' \dontrun{
-#' kmeans <- clustering(normalized, k = 10, method = "kmeans")
-#' hierarchical<- clustering(normalized, k = 10, method = "hierarchical", distance_method = "manhattan")
-#' pam <- clustering(normalized, k = 10, method = "pam")
-#' }
 #' @export
-clustering <- function(data, k, method = c("kmeans", "hierarchical", "pam"),
-                       nstart = 25, distance_method = "euclidean") {
+clustering <- function(expr_data, k, method = c("kmeans", "hierarchical", "pam"), nstart = 25, distance_method = "euclidean") {
   method <- match.arg(method)
 
-  if (!is.matrix(data) && !is.data.frame(data)) {
-    stop("'data' must be a numeric matrix or data frame")
-  }
-  data <- as.matrix(data)
-  if (!is.numeric(data)) {
-    stop("'data' must be numeric")
-  }
-  if (!is.numeric(k) || length(k) != 1 || k <= 1) {
-    stop("'k' must be a single integer greater than 1")
-  }
-  if (k > nrow(data)) {
-    warning("'k' is larger than the number of rows in 'data'")
-  }
+  if (!is.matrix(expr_data) && !is.data.frame(expr_data)) stop("'expr_data' must be a matrix or data frame")
+  expr_data <- as.matrix(expr_data)
+  if (!is.numeric(expr_data)) stop("'expr_data' must be numeric")
+  if (k <= 1 || k > nrow(expr_data)) stop("'k' must be >1 and <= number of rows")
+
+  if (is.null(rownames(expr_data))) stop("'expr_data' must have row names for gene identifiers")
 
   if (method == "kmeans") {
-    model <- kmeans(data, centers = k, nstart = nstart)
+    model <- kmeans(expr_data, centers = k, nstart = nstart)
     clusters <- model$cluster
 
   } else if (method == "hierarchical") {
-    dist_mat <- dist(data, method = distance_method)
+    dist_mat <- dist(expr_data, method = distance_method)
     model <- hclust(dist_mat, method = "ward.D2")
     clusters <- cutree(model, k = k)
 
   } else if (method == "pam") {
-    if (!requireNamespace("cluster", quietly = TRUE)) {
-      stop("Please install the 'cluster' package to use PAM.")
-    }
-    dist_mat <- dist(data, method = distance_method)
-    model <- cluster::pam(dist_mat, k = k)
+    dist_mat <- dist(expr_data, method = distance_method)
+    model <- pam(dist_mat, k = k)
     clusters <- model$clustering
   }
 
-  if (is.null(rownames(data))) {
-    stop("Input data must have rownames corresponding to gene symbols.")
-  }
-  names(clusters) <- rownames(data)
+  names(clusters) <- rownames(expr_data)
 
   return(list(clusters = clusters, model = model))
 }

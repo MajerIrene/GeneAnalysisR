@@ -4,21 +4,23 @@
 \alias{plot_dotplot}
 \title{Plot a Dotplot for a Single GO Enrichment Result}
 \usage{
-plot_dotplot(enrichment_res, title = "GO Enrichment Dotplot")
+plot_dotplot(enrichment_res, title, showCategory = 10)
 }
 \arguments{
-\item{enrichment_res}{An object of class `enrichResult`, typically the result of `enrichGO()`.}
+\item{enrichment_res}{An object of class `enrichResult`, that is the result of `enrichGO()`.}
 
 \item{title}{A character string specifying the plot title.}
+
+\item{showCategory}{Number of enriched term to show in the plot. Default is 10.}
 }
 \value{
-A ggplot object representing the dotplot of enrichment results.
+Plots the dotplot of enrichment results.
 }
 \description{
-This function creates a dotplot from a single GO enrichment result (from `enrichGO`, `enrichKEGG`, etc.).
+This function creates a dotplot from a single GO enrichment result.
 }
 \examples{
 \dontrun{
-plot_dotplot(go_kmeans[[1]], title = "GO Enrichment - KMeans cluster 1")
+plot_dotplot(go_kmeans[[1]], title = "GO Enrichment - KMeans cluster 1", showCategory = 15)
 }
 }

@@ -1,11 +1,12 @@
 #' Plot a Dotplot for a Single GO Enrichment Result
 #'
-#' This function creates a dotplot from a single GO enrichment result (from `enrichGO`, `enrichKEGG`, etc.).
+#' This function creates a dotplot from a single GO enrichment result.
 #'
-#' @param enrichment_res An object of class `enrichResult`, typically the result of `enrichGO()`.
+#' @param enrichment_res An object of class `enrichResult`, that is the result of `enrichGO()`.
+#' @param showCategory Number of enriched term to show in the plot. Default is 10.
 #' @param title A character string specifying the plot title.
 #'
-#' @return A ggplot object representing the dotplot of enrichment results.
+#' @return Plots the dotplot of enrichment results.
 #'
 #' @importFrom enrichplot dotplot
 #' @importFrom ggplot2 ggtitle
@@ -13,13 +14,9 @@
 #'
 #' @examples
 #' \dontrun{
-#' plot_dotplot(go_kmeans[[1]], title = "GO Enrichment - KMeans cluster 1")
+#' plot_dotplot(go_kmeans[[1]], title = "GO Enrichment - KMeans cluster 1", showCategory = 15)
 #' }
-plot_dotplot <- function(enrichment_res, title = "GO Enrichment Dotplot") {
-  if (!requireNamespace("enrichplot", quietly = TRUE)) {
-    stop("The 'enrichplot' package is required. Please install it using BiocManager::install('enrichplot').")
-  }
-  # Can't pass any argument function because of errors
-  p <- enrichplot::dotplot(enrichment_res) + ggplot2::ggtitle(title)
+plot_dotplot <- function(enrichment_res, title, showCategory = 10) {
+  p <- dotplot(enrichment_res, showCategory = showCategory) + ggtitle(title)
   return(p)
 }

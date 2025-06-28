@@ -22,5 +22,4 @@ Reads a gene expression matrix from a CSV, TSV, or TXT file. Assumes genes are i
 \examples{
 file_path <- system.file("extdata", "airway_top500.csv", package = "GeneClustR")
 expr <- read_expression_data(file_path)
-
 }

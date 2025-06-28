@@ -11,17 +11,15 @@ plot_dendrogram(clustering_res)
 with an element `model` of class `hclust` and `clusters` vector.}
 }
 \value{
-NULL (plots the dendrogram).
+Plots the dendrogram.
 }
 \description{
 This function plots a hierarchical clustering dendrogram with improved
-visualization: smaller, colored labels and horizontal orientation to improve readability.
+visualization: smaller, colored labels and horizontal orientation.
 }
 \examples{
 \dontrun{
-data <- matrix(rnorm(100), nrow = 50)
-rownames(data) <- paste0("Gene", 1:50)
-res <- clustering(data, k = 4, method = "hierarchical")
-plot_dendrogram_improved(res)
+hierarchical <- clustering(data, k = 4, method = "hierarchical")
+plot_dendrogram(hierarchical)
 }
 }

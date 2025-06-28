@@ -7,8 +7,7 @@
 plot_boxplot(expr_data, title = "Expression Data")
 }
 \arguments{
-\item{expr_data}{A numeric matrix or data frame of expression data
-(genes as rows, samples as columns).}
+\item{expr_data}{A numeric matrix or data frame of expression data (genes x samples).}
 
 \item{title}{A character string for the plot title (e.g., "Raw Data" or "Normalized Data").}
 }
