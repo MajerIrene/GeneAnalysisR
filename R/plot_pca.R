@@ -14,6 +14,10 @@
 #' plot_pca(normalized, kmeans$clusters)
 #' }
 plot_pca <- function(expr_data, clusters) {
+  if (length(clusters) != nrow(expr_data)) {
+    stop("Length of clusters vector does not match number of samples (rows) in expr_data.")
+  }
+
   data_numeric <- as.matrix(expr_data)
 
   pca <- prcomp(data_numeric, scale. = TRUE)
@@ -27,18 +31,18 @@ plot_pca <- function(expr_data, clusters) {
 
   colors <- c("#084594", "#bdd7e7")
 
-  ggplot2::ggplot(pc_data, ggplot2::aes(x = PC1, y = PC2, color = Cluster)) +
-    ggplot2::geom_point(size = 2, alpha = 0.8) +
-    ggplot2::scale_color_manual(values = colors) +
-    ggplot2::labs(
+  ggplot(pc_data, aes(x = PC1, y = PC2, color = Cluster)) +
+    geom_point(size = 2, alpha = 0.8) +
+    scale_color_manual(values = colors) +
+    labs(
       title = "PCA Plot",
       x = paste0("PC1 (", explained_var[1], "%)"),
       y = paste0("PC2 (", explained_var[2], "%)"),
       color = "Cluster"
     ) +
-    ggplot2::theme_minimal(base_size = 13) +
-    ggplot2::theme(
-      plot.title = ggplot2::element_text(face = "bold", hjust = 0.5),
+    theme_minimal(base_size = 13) +
+    theme(
+      plot.title = element_text(face = "bold", hjust = 0.5),
       legend.position = "right"
     )
 }

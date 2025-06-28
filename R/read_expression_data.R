@@ -14,12 +14,10 @@
 #' expr <- read_expression_data(file_path)
 
 read_expression_data <- function(file_path, header = TRUE, row_names = TRUE) {
-  # Check file existence
   if (!file.exists(file_path)) {
     stop("File does not exist: ", file_path)
   }
 
-  # Use different separator for different file format
   ext <- tools::file_ext(file_path)
   sep <- switch(
     tolower(ext),
@@ -29,7 +27,6 @@ read_expression_data <- function(file_path, header = TRUE, row_names = TRUE) {
     stop("Unsupported file extension: file format must be .csv, .tsv, or .txt")
   )
 
-  # Read file
   df <- tryCatch(
     {
       read.delim(file_path, sep = sep, header = header, row.names = if (row_names) 1 else NULL, check.names = FALSE)
@@ -39,11 +36,17 @@ read_expression_data <- function(file_path, header = TRUE, row_names = TRUE) {
     }
   )
 
-  # Convert to numeric matrix
   mat <- as.matrix(df)
-  if (!is.numeric(mat)) {
+
+  # suppressWarning because of test
+  mat_num <- suppressWarnings(matrix(as.numeric(mat), nrow = nrow(mat), ncol = ncol(mat)))
+  if (any(is.na(mat_num))) {
     stop("Data could not be coerced to a numeric matrix. Check for non-numeric values inside your matrix.")
   }
 
-  return(mat)
+  rownames(mat_num) <- rownames(mat)
+  colnames(mat_num) <- colnames(mat)
+
+  return(mat_num)
 }
+

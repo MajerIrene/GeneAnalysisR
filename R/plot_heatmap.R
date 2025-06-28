@@ -19,6 +19,26 @@
 plot_heatmap <- function(expr_data, clustering_res, scale_data = TRUE) {
 
   if (!is.matrix(expr_data)) expr_data <- as.matrix(expr_data)
+  # Adding check on input after test
+  if (is.null(clustering_res) || !is.list(clustering_res)) {
+    stop("clustering_res must be a list.")
+  }
+
+  if (is.null(clustering_res$model)) {
+    stop("clustering_res$model is missing.")
+  }
+
+  if (is.null(clustering_res$clusters)) {
+    stop("clustering_res$clusters is missing or NULL.")
+  }
+
+  if (!is.vector(clustering_res$clusters)) {
+    stop("clustering_res$clusters must be a vector.")
+  }
+
+  if (length(clustering_res$clusters) != nrow(expr_data)) {
+    stop("Length of clustering_res$clusters does not match number of rows in expr_data.")
+  }
 
   # Check if rownames exist and match cluster names
   if (is.null(rownames(expr_data))) {

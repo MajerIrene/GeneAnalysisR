@@ -28,12 +28,14 @@ plot_dendrogram <- function(clustering_res) {
   k <- length(unique(clustering_res$clusters))
 
   dend <- color_branches(dend, k = k)
-  dend <- set(dend, "labels", NA)  # Labels are not readable so I won't show them
+
+  dend <- set(dend, "labels_cex", 0.7)
 
   old_mar <- par("mar")
   on.exit(par(mar = old_mar))
-  par(mar = c(5, 4, 4, 2))
+  par(mar = c(5, 7, 4, 2))
 
   plot(dend, main = "Hierarchical Clustering Dendrogram", horiz = TRUE)
+
   rect.dendrogram(dend, k = k, border = 2:(k + 1), horiz = TRUE)
 }

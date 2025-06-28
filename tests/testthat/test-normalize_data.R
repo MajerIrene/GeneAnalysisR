@@ -19,8 +19,8 @@ test_that("normalize_data zscore works correctly", {
 
   norm <- normalize_data(mat, method = "zscore")
 
-  # z-score of each gene across its own row
-  expect_equal(rowMeans(norm), c(0, 0), tolerance = 1e-8)
+  # z-score of each gene across its own row, maintain gene names because test fail otherwise
+  expect_equal(rowMeans(norm), setNames(c(0,0), c("gene1","gene2")), tolerance = 1e-8)
 })
 
 test_that("normalize_data quantile normalization preserves shapes", {
@@ -37,5 +37,5 @@ test_that("normalize_data quantile normalization preserves shapes", {
 
 test_that("normalize_data errors on invalid method", {
   mat <- matrix(rnorm(10), nrow = 2)
-  expect_error(normalize_data(mat, method = "invalid"), "must be one of")
+  expect_error(normalize_data(mat, method = "invalid"), "should be one of")
 })

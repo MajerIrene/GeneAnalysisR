@@ -34,26 +34,23 @@ filter_outlier_genes <- function(data,
                                  z_cutoff = 3,
                                  plot_report = TRUE) {
 
-  # Added after performing test, need to check for rownames
-  if (is.null(rownames(expr))) {
+  # Controllo corretto per rownames
+  if (is.null(rownames(data))) {
     stop("Input expression matrix must have row names (gene names).")
   }
-  # Calculate Z-score standardizing the mean
+
   z_score <- function(x) (x - mean(x)) / sd(x)
 
-  # Mean expr and variance expression per gene
   gene_means <- rowMeans(data)
   gene_vars <- apply(data, 1, var)
 
   z_means <- z_score(gene_means)
   z_vars <- z_score(gene_vars)
 
-  # Keep genes with enough mean, variance and zscore
   keep_expr <- gene_means > min_mean_expr
   keep_var <- gene_vars > min_var
   keep_z <- (abs(z_means) < z_cutoff) & (abs(z_vars) < z_cutoff)
 
-  # Combine the three condition
   keep <- keep_expr & keep_var & keep_z
 
   data_filtered <- data[keep, , drop = FALSE]

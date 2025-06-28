@@ -17,6 +17,13 @@
 #' plot_dotplot(go_kmeans[[1]], title = "GO Enrichment - KMeans cluster 1", showCategory = 15)
 #' }
 plot_dotplot <- function(enrichment_res, title, showCategory = 10) {
+  # Adding check after test
+  valid_classes <- c("enrichResult", "gseaResult", "compareClusterResult")
+
+  if (!inherits(enrichment_res, valid_classes)) {
+    stop("Input must be an enrichment result object of class enrichResult, gseaResult, or compareClusterResult")
+  }
+
   p <- dotplot(enrichment_res, showCategory = showCategory) + ggtitle(title)
   return(p)
 }

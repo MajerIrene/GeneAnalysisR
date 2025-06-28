@@ -18,6 +18,13 @@
 #'   plot_boxplot(expr_data = normalized, title = "Normalized Expression")
 #' }
 plot_boxplot <- function(expr_data, title = "Expression Data") {
+  if (!is.matrix(expr_data) && !is.data.frame(expr_data)) {
+    stop("expr_data must be a numeric matrix or data frame.")
+  }
+  if (!is.numeric(as.matrix(expr_data))) {
+    stop("expr_data must contain only numeric values.")
+  }
+
   long_data <- melt(expr_data)
   colnames(long_data) <- c("Gene", "Sample", "Expression")
 

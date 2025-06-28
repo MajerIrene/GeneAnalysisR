@@ -23,7 +23,12 @@
 #' }
 
 plot_gsea <- function(gsea_result, top_n = 10) {
-  df <- as.data.frame(gsea_result)
+  # Check added after test
+  df <- tryCatch(as.data.frame(gsea_result), error = function(e) NULL)
+
+  if (is.null(df) || !"NES" %in% colnames(df)) {
+    stop("Input must be convertible to a data.frame containing an 'NES' column")
+  }
 
   # Separate by NES direction (cluster1 positive, cluster2 negative)
   pos <- df[df$NES > 0, ]

@@ -38,5 +38,5 @@ test_that("filter_outlier_genes respects plot_report argument", {
 test_that("filter_outlier_genes errors on missing rownames", {
   expr <- matrix(rnorm(50, mean = 5), nrow = 10)
 
-  expect_error(filter_outlier_genes(expr), "subscript out of bounds|row names")
+  expect_error(filter_outlier_genes(expr), "must have row names")
 })

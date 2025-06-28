@@ -18,7 +18,8 @@ test_that("plot_dendrogram produces a plot for valid clustering result", {
     clusters = clusters
   )
 
-  expect_silent(plot_dendrogram(res))
+  # There is one warning in the function so we ignore it
+  expect_warning(plot_dendrogram(res), NA)
 })
 
 

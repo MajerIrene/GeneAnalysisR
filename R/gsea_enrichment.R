@@ -35,7 +35,14 @@ gsea_enrichment <- function(gene_ranking,
                                      maxGSSize = 500,
                                      pvalueCutoff = 0.05) {
   gene_ranking <- sort(gene_ranking, decreasing = TRUE)
+
+  # Add check for test
   gene_ranking <- gene_ranking[!is.na(names(gene_ranking)) & names(gene_ranking) != ""]
+
+  # Check 2 for test
+  if (length(gene_ranking) == 0) {
+    stop("gene_ranking must be a non-empty named numeric vector with valid gene names.")
+  }
 
   gsea_result <- gseGO(
     geneList = gene_ranking,

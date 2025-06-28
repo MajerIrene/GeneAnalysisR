@@ -35,6 +35,7 @@ test_that("plot_heatmap errors with invalid clustering_res", {
   mat <- matrix(rnorm(100), nrow = 10)
   expect_error(
     plot_heatmap(mat, list(model = NULL, clusters = NULL)),
-    NA  #Warn
+    "clustering_res\\$model is missing"  # o una parte del messaggio di errore
   )
 })
+

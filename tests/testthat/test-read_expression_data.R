@@ -43,7 +43,7 @@ test_that("read_expression_data errors on non-numeric data", {
   df <- data.frame(Gene1 = c("a", "b", "c"), Gene2 = c(1, 2, 3))
   write.csv(df, tmp, row.names = TRUE)
 
-  expect_error(read_expression_data(tmp), "Non-numeric values detected")
+  expect_error(read_expression_data(tmp), "Data could not be coerced to a numeric matrix")
 })
 
 test_that("read_expression_data handles no row names", {

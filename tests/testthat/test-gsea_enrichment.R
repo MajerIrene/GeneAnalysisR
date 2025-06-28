@@ -4,44 +4,47 @@
 # Throw error on missing names
 # TBD
 
-
 test_that("gsea_enrichment returns gseaResult", {
-  # create ranking for test
+  # Use real gene symbols from OrgDb keys
+  real_genes <- sample(keys(org.Hs.eg.db, keytype = "SYMBOL"), 100)
+
   gene_ranking <- rnorm(100)
-  names(gene_ranking) <- paste0("GENE", seq_along(gene_ranking))
+  names(gene_ranking) <- real_genes
 
   res <- gsea_enrichment(
     gene_ranking = gene_ranking,
     OrgDb = org.Hs.eg.db
   )
 
-  expect_s3_class(res, "gseaResult")
+  expect_s4_class(res, "gseaResult")
 })
 
-test_that("gsea_enrichment handles empty ranking", {
+test_that("gsea_enrichment errors on empty ranking", {
   gene_ranking <- numeric(0)
   names(gene_ranking) <- character(0)
 
   expect_error(
     gsea_enrichment(
-      gene_ranking,
+      gene_ranking = gene_ranking,
       OrgDb = org.Hs.eg.db
     ),
-    "geneList should be a named numeric vector" # error comes from gseGO
+    "gene_ranking must be a non-empty named numeric vector"
   )
 })
 
 test_that("gsea_enrichment works with different ontologies", {
+  real_genes <- sample(keys(org.Hs.eg.db, keytype = "SYMBOL"), 100)
+
   gene_ranking <- rnorm(100)
-  names(gene_ranking) <- paste0("GENE", seq_along(gene_ranking))
+  names(gene_ranking) <- real_genes
 
   res <- gsea_enrichment(
-    gene_ranking,
+    gene_ranking = gene_ranking,
     OrgDb = org.Hs.eg.db,
     ont = "MF"
   )
 
-  expect_s3_class(res, "gseaResult")
+  expect_s4_class(res, "gseaResult")
 })
 
 test_that("gsea_enrichment errors on missing names", {
@@ -50,9 +53,9 @@ test_that("gsea_enrichment errors on missing names", {
 
   expect_error(
     gsea_enrichment(
-      gene_ranking,
+      gene_ranking = gene_ranking,
       OrgDb = org.Hs.eg.db
     ),
-    "geneList should be a named numeric vector" # from gseGO
+    "gene_ranking must be a non-empty named numeric vector"
   )
 })

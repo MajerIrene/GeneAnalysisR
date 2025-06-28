@@ -151,7 +151,7 @@ Finally the pca plot for PAM clustering:
 plot_pca(filtered_data, pam$clusters)
 ```
 
-The clear separation suggests that hierarchical clustering has identified two groups that differ significantly along a dominant latent feature—possibly linked to biological or experimental conditions such as treated vs. untreated. The fact that PC1 captures the vast majority of the variance further supports the idea that a two-cluster solution is appropriate and meaningful in this dataset in both cases. We can now visualize the dendrogram resulting from the hierarchical clustering. In this package, the plot_dendrogram function omits gene labels by default, as displaying all of them would result in an unreadable and cluttered visualization.
+The clear separation suggests that hierarchical clustering has identified two groups that differ significantly along a dominant latent feature—possibly linked to biological or experimental conditions such as treated vs. untreated. The fact that PC1 captures the vast majority of the variance further supports the idea that a two-cluster solution is appropriate and meaningful in this dataset in both cases. We can now visualize the dendrogram resulting from the hierarchical clustering. Note that you need to save separately the image in order to have a better visualization of the gene names.
 
 ```{r, warning=FALSE}
 plot_dendrogram(hierarchical)
